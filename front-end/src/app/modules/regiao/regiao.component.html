@@ -1,3 +1,45 @@
-<p>
-  regiao works!
-</p>
+<div class="container mt-4">
+  <h1 class="text-center">Cadastro de Regiões</h1>
+
+  <form [formGroup]="regiaoForm" (ngSubmit)="onSubmit()" class="mt-4">
+    <div class="form-group">
+      <label for="nome">Nome da Região</label>
+      <input type="text" id="nome" formControlName="nome" class="form-control" placeholder="Digite o nome da região" />
+      <div class="text-danger" *ngIf="regiaoForm.get('nome')?.touched && regiaoForm.get('nome')?.hasError('required')">
+        O nome é obrigatório.
+      </div>
+    </div>
+
+    <div class="col-md-12 mt-4">
+      <label class="title" for="cidades">Locais da região</label>
+      <div class="p-12" formArrayName="cidades">
+        <div *ngFor="let cidade of getCidades().controls; let i = index" [formGroupName]="i" class="row mb-2">
+          <div class="col-md-6">
+            <div class="form-group mb-2">
+              <label for="cidade">Cidade</label>
+              <select formControlName="id" class="form-control" required>
+                <option *ngFor="let cidade of cidadesDisponiveis" [value]="cidade.id">{{ cidade.nome }} - {{ cidade.uf }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div style="display: flex; height:100%; align-items: center;">
+              <button type="button" class="btn btn-danger mt-2" (click)="removerCidade(i)">Remover Cidade</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-success mt-2" (click)="adicionarCidade()">Adicionar Cidade</button>
+    </div>
+
+    <div class="form-actions mt-4 text-center">
+      <button type="button" class="btn btn-secondary mr-2" routerLink="/home">
+        Cancelar
+      </button>
+      <button type="submit" class="btn btn-success mr-2" [disabled]="regiaoForm.invalid">
+        Salvar
+      </button>
+    </div>
+  </form>
+</div>

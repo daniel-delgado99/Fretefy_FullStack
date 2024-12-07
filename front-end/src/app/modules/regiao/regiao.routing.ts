@@ -8,4 +8,4 @@ const routes: Routes = [
   },
 ];
 
-export const  RegiaoRoutingModule = RouterModule.forChild(routes);
+export const RegiaoRoutingModule = RouterModule.forChild(routes);

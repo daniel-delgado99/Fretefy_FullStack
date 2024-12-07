@@ -1,3 +1,40 @@
-<p>
-  home works!
-</p>
+<div class="container mt-4">
+
+  <h2 class="mt-5">Regiões Cadastradas</h2>
+
+  <table class="table table-striped table-bordered mt-3">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Cidades</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let regiao of regioes">
+        <td>{{ regiao.nome }}</td>
+        <td>{{ formatarCidades(regiao.cidades) }}</td>
+        <td>{{ regiao.ativo ? 'Ativa' : 'Desativada' }}</td>
+        <td>
+          <div class="dropdown">
+            <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="dropdownMenuButton"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Ações
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li><div class="dropdown-item cs-pointer" (click)="toggleAtiva(regiao)">{{!regiao.ativo ? 'Ativar' : 'Desativar'}}</div></li>
+              <li><div class="dropdown-item cs-pointer" (click)="editarRegiao(regiao)">Editar</div></li>
+              <li><div class="dropdown-item cs-pointer text-danger" (click)="removerRegiao(regiao)">Remover</div></li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-primary" (click)="irParaCadastro()" routerLink="/regiao">Cadastrar região</button>
+
+  <div class="text-center mt-4">
+    <button class="btn btn-info" (click)="exportarParaExcel()">Exportar para Excel</button>
+  </div>
+</div>
