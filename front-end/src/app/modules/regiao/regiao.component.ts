@@ -11,34 +11,41 @@ import { CIDADES } from 'src/app/shared/cidade';
 export class RegiaoComponent implements OnInit {
   id: string | null = null;
   regiaoForm: FormGroup;
-  cidadesDisponiveis = CIDADES;
+  cidadesDisponiveis;
 
   constructor(private fb: FormBuilder, private regiaoService: RegiaoService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.id = params.get('id');
-    });
-
     this.regiaoForm = this.fb.group({
       nome: ['', Validators.required],
       ativo: [false],
       cidades: this.fb.array([])
     });
 
-    if (this.id) {
-      const regiao = this.regiaoService.getRegiaoById(this.id);
 
-      this.regiaoForm.patchValue({
-        nome: regiao.nome,
-        ativo: regiao.ativo,
-      })
-      for (let i = 0; i < regiao.cidades.length; i++) {
-        this.adicionarCidade(regiao.cidades[i])
+    this.route.paramMap.subscribe(params => {
+      this.id = params.get('id');
+    });
+
+    this.regiaoService.getCidades().subscribe(data => {
+      this.cidadesDisponiveis = data;
+
+      if (this.id) {
+        this.regiaoService.getRegiaoById(this.id).subscribe((data: any) => {
+          const regiao = data;
+
+          this.regiaoForm.patchValue({
+            nome: regiao.nome,
+            ativo: regiao.ativo,
+          })
+          for (let i = 0; i < regiao.cidades.length; i++) {
+            this.adicionarCidade(regiao.cidades[i])
+          }
+        });
+      } else {
+        this.adicionarCidade()
       }
-    } else {
-      this.adicionarCidade()
-    }
+    })
   }
 
   getCidades(): FormArray {
@@ -83,18 +90,24 @@ export class RegiaoComponent implements OnInit {
     }
 
     for (let i = 0; i < cidades.length; i++) {
-      cidades[i] = this.cidadesDisponiveis.find(cidade => cidade.id == cidades[i].id)
+      cidades[i]['cidadeId'] = this.cidadesDisponiveis.find(cidade => cidade.id == cidades[i].id)['id']
     }
 
-    const result = this.regiaoService.salvarRegiao(this.regiaoForm.value, this.id)
-    if (!result.success) {
-      alert(result.error)
-    } else {
-      alert('Cadastrado com sucesso!')
+    const value = this.regiaoForm.value
+    let model = {
+      nome: value.nome,
+      ativo: true,
+      RegiaoCidades: cidades
+    }
+
+    this.regiaoService.salvarRegiao(model, this.id).subscribe(data => {
+      alert('Salvo com sucesso!')
       this.regiaoForm.reset();
       this.getCidades().clear();
       this.adicionarCidade();
       this.router.navigate(['/regiao'])
-    }
+    }, error => {
+      alert('Ocorreu um erro')
+    })
   }
 }
