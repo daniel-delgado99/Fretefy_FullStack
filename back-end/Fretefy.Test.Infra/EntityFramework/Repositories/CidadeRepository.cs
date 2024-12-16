@@ -1,6 +1,7 @@
 ﻿using Fretefy.Test.Domain.Entities;
 using Fretefy.Test.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,10 +10,12 @@ namespace Fretefy.Test.Infra.EntityFramework.Repositories
     public class CidadeRepository : ICidadeRepository
     {
         private DbSet<Cidade> _dbSet;
+        private DbSet<RegiaoCidade> _dbSetRegiaoCidade;
 
         public CidadeRepository(DbContext dbContext)
         {
             _dbSet = dbContext.Set<Cidade>();
+            _dbSetRegiaoCidade = dbContext.Set<RegiaoCidade>();
         }
 
         public IQueryable<Cidade> List()
